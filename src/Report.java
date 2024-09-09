@@ -5,7 +5,7 @@ public class Report {
         Manager manager = new Manager();
         try {
             manager.loadResults();
-            WordWorker.writeToDocument(manager.getSortedMatches(manager.PL, 22));
+            WordWorker.writeToDocument(manager.getSortedMatches(manager.PL, 23));
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
