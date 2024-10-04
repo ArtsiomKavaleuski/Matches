@@ -7,6 +7,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,6 +22,10 @@ public class Manager {
     public static String ZK24 = "Женский Кубок Беларуси 2024";
     public static String ZSK24 = "Женский Суперкубок 2024";
     public static String BSK24 = "BETERA - Суперкубок Беларуси 2024";
+    public static String groupA = "Вторая лига 2024 - Финальный этап - Группа А";
+    public static String groupB = "Вторая лига 2024 - Финальный этап - Группа Б";
+    public static String groupC = "Вторая лига 2024 - Финальный этап - Группа В";
+    public static String groupD = "Вторая лига 2024 - Финальный этап - Группа Г";
     HashMap<Integer, Match> matches = new HashMap<>();
     HashMap<Integer, String> ref = new HashMap<>();
     HashMap<Integer, String> first = new HashMap<>();
@@ -80,6 +86,19 @@ public class Manager {
         return matches.values().stream()
                 .filter(m -> m.championshipName.equals(champName))
                 .toList();
+    }
+
+    public List<Match> getSortedMatches(List<String> champName, int round) {
+        List<Match> matchesList = new ArrayList<>();
+        for(String champ : champName) {
+            matchesList.addAll(matches.values().stream()
+                    .filter(m -> m.championshipName.equals(champ))
+                    .filter(m -> m.matchRound == round)
+                    .sorted(new MatchByDateComparator())
+                    .toList());
+            System.out.println(champ);
+        }
+        return matchesList;
     }
 
     public List<Match> getSortedMatches(String champName, int round) {
@@ -174,10 +193,12 @@ public class Manager {
             } else {
                 matches.addAll(jsonArray);
             }
+            System.out.println("page " + pages + " of Matchecs was loaded");
             pages++;
         }
 
         while (true) {
+            int time1 = LocalTime.now().getSecond();
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
                     .uri(getRefURI())
@@ -198,13 +219,19 @@ public class Manager {
             } else {
                 referees.addAll(jsonArray);
             }
+            int time2 = LocalTime.now().getSecond() - time1;
+            System.out.println("page " + pages + " of Referees was loaded in " + time2 + " sec");
             pages++;
         }
 
         for (JsonElement j : referees) {
-            if (!j.getAsJsonObject().get("roleStatus").equals("ОТКАЗАНО") && (j.getAsJsonObject().get("name").getAsString().equals("Женская Высшая лига 2024") ||
+            if (!j.getAsJsonObject().get("roleStatus").toString().contains("ОТКАЗАНО") && (j.getAsJsonObject().get("name").getAsString().equals("Женская Высшая лига 2024") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Суперкубок") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Беларусбанк") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа А") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа Б") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа В") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа Г") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Первая лига 2024") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Кубок"))) {
                 int matchId = Integer.parseInt(j.getAsJsonObject().get("uid").getAsString());
@@ -220,6 +247,10 @@ public class Manager {
             if (j.getAsJsonObject().get("name").getAsString().equals("Женская Высшая лига 2024") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Суперкубок") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Беларусбанк") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа А") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа Б") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа В") ||
+                    j.getAsJsonObject().get("name").getAsString().contains("Вторая лига 2024 - Финальный этап - Группа Г") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Первая лига 2024") ||
                     j.getAsJsonObject().get("name").getAsString().contains("Кубок")) {
                 int matchId = Integer.parseInt(j.getAsJsonObject().get("uid").getAsString());

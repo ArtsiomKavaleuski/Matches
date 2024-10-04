@@ -123,6 +123,18 @@ public class WordWorker {
             case "Беларусбанк - Высшая лига 2024":
                 teamType = "среди команд высшей лиги.";
                 break;
+            case "Вторая лига 2024 - Финальный этап - Группа А":
+                teamType = "среди команд второй лиги.";
+                break;
+            case "Вторая лига 2024 - Финальный этап - Группа Б":
+                teamType = "среди команд второй лиги.";
+                break;
+            case "Вторая лига 2024 - Финальный этап - Группа В":
+                teamType = "среди команд второй лиги.";
+                break;
+            case "Вторая лига 2024 - Финальный этап - Группа Г":
+                teamType = "среди команд второй лиги.";
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + matches.getFirst().championshipName);
         }
@@ -198,7 +210,6 @@ public class WordWorker {
                     + " - " + ww.dateConverter(dates.getLast()) + " "
         + dates.getFirst().getYear() + " года (" + ww.dayOfWeekConverter(dates.getFirst()) + " - " + ww.dayOfWeekConverter(dates.getLast()) + ")");
             run.addBreak();
-            run.addBreak();
             XWPFTable table = document.createTable(matches.size() + dates.size() + 1, 9);
 
             XWPFTableRow firstRow = table.getRows().get(0);
@@ -253,7 +264,7 @@ public class WordWorker {
                     XWPFParagraph par1 = cell1.getParagraphs().getFirst();
                     par1.setSpacingBetween(1);
                     par1.setAlignment(ParagraphAlignment.LEFT);
-                    par1.setSpacingBefore(10);
+                    par1.setSpacingBefore(1);
                     par1.setSpacingAfter(0);
                     XWPFRun cell1Run = par1.createRun();
                     cell1Run.setBold(true);
@@ -352,14 +363,14 @@ public class WordWorker {
 
 
             // сохраняем модель docx документа в файл
-            String fileName = "src/resources/" + matches.getFirst().matchRound + " тур " + matches.getFirst().championshipName + ".docx";
+            String fileName = "src/resources/Назначения " + matches.getFirst().matchRound + " тур " + matches.getFirst().championshipName + ".docx";
             FileOutputStream outputStream = new FileOutputStream(fileName);
             document.write(outputStream);
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Успешно записан в файл");
+
     }
 
 
